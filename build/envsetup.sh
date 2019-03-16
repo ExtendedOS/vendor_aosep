@@ -1,11 +1,11 @@
- # scissor functions that extend build/envsetup.sh
+ # aosep functions that extend build/envsetup.sh
 
-function scissor_device_combos()
+function aosep_device_combos()
 {
     local T list_file variant device
 
     T="$(gettop)"
-    list_file="${T}/vendor/scissor/scissor.devices"
+    list_file="${T}/vendor/aosep/aosep.devices"
     variant="userdebug"
 
     if [[ $1 ]]
@@ -27,45 +27,45 @@ function scissor_device_combos()
     if [[ ! -f "${list_file}" ]]
     then
         echo "unable to find device list: ${list_file}"
-        list_file="${T}/vendor/scissor/scissor.devices"
+        list_file="${T}/vendor/aosep/aosep.devices"
         echo "defaulting device list file to: ${list_file}"
     fi
 
     while IFS= read -r device
     do
-        add_lunch_combo "scissor_${device}-${variant}"
+        add_lunch_combo "aosep_${device}-${variant}"
     done < "${list_file}"
 }
 
-function scissor_rename_function()
+function aosep_rename_function()
 {
-    eval "original_scissor_$(declare -f ${1})"
+    eval "original_aosep_$(declare -f ${1})"
 }
 
-function _scissor_build_hmm() #hidden
+function _aosep_build_hmm() #hidden
 {
     printf "%-8s %s" "${1}:" "${2}"
 }
 
-function scissor_append_hmm()
+function aosep_append_hmm()
 {
-    HMM_DESCRIPTIVE=("${HMM_DESCRIPTIVE[@]}" "$(_scissor_build_hmm "$1" "$2")")
+    HMM_DESCRIPTIVE=("${HMM_DESCRIPTIVE[@]}" "$(_aosep_build_hmm "$1" "$2")")
 }
 
-function scissor_add_hmm_entry()
+function aosep_add_hmm_entry()
 {
     for c in ${!HMM_DESCRIPTIVE[*]}
     do
         if [[ "${1}" == $(echo "${HMM_DESCRIPTIVE[$c]}" | cut -f1 -d":") ]]
         then
-            HMM_DESCRIPTIVE[${c}]="$(_scissor_build_hmm "$1" "$2")"
+            HMM_DESCRIPTIVE[${c}]="$(_aosep_build_hmm "$1" "$2")"
             return
         fi
     done
-    scissor_append_hmm "$1" "$2"
+    aosep_append_hmm "$1" "$2"
 }
 
-function scissorremote()
+function aosepremote()
 {
     local proj pfx project
 
@@ -74,7 +74,7 @@ function scissorremote()
         echo "Not in a git directory. Please run this from an Android repository you wish to set up."
         return
     fi
-    git remote rm scissor 2> /dev/null
+    git remote rm aosep 2> /dev/null
 
     proj="$(pwd -P | sed "s#$ANDROID_BUILD_TOP/##g")"
 
@@ -84,8 +84,8 @@ function scissorremote()
 
     project="${proj//\//_}"
 
-    git remote add scissor "git@github.com:scissor/$pfx$project"
-    echo "Remote 'scissor' created"
+    git remote add aosep "git@github.com:aosep/$pfx$project"
+    echo "Remote 'aosep' created"
 }
 
 function cmremote()
@@ -145,11 +145,11 @@ function cafremote()
     echo "Remote 'caf' created"
 }
 
-function scissor_push()
+function aosep_push()
 {
     local branch ssh_name path_opt proj
     branch="lp5.1"
-    ssh_name="scissor_review"
+    ssh_name="aosep_review"
     path_opt=
 
     if [[ "$1" ]]
@@ -171,7 +171,7 @@ function scissor_push()
 }
 
 
-scissor_rename_function hmm
+aosep_rename_function hmm
 function hmm() #hidden
 {
     local i T
@@ -179,12 +179,12 @@ function hmm() #hidden
     original_scissor_hmm
     echo
 
-    echo "vendor/scissor extended functions. The complete list is:"
-    for i in $(grep -P '^function .*$' "$T/vendor/scissor/build/envsetup.sh" | grep -v "#hidden" | sed 's/function \([a-z_]*\).*/\1/' | sort | uniq); do
+    echo "vendor/aosep extended functions. The complete list is:"
+    for i in $(grep -P '^function .*$' "$T/vendor/aosep/build/envsetup.sh" | grep -v "#hidden" | sed 's/function \([a-z_]*\).*/\1/' | sort | uniq); do
         echo "$i"
     done |column
 }
 
-scissor_append_hmm "scissorremote" "Add a git remote for matching scissor repository"
-scissor_append_hmm "aospremote" "Add git remote for matching AOSP repository"
-scissor_append_hmm "cafremote" "Add git remote for matching CodeAurora repository."
+aosep_append_hmm "aosepremote" "Add a git remote for matching aosep repository"
+aosep_append_hmm "aospremote" "Add git remote for matching AOSP repository"
+aosep_append_hmm "cafremote" "Add git remote for matching CodeAurora repository."
