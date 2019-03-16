@@ -1,4 +1,4 @@
-# Copyright (C) 2017 AospExtended ROM
+# Copyright (C) 2019 aosep ROM
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,33 +13,33 @@
 # limitations under the License.
 
 #Extended Versioning
-EXTENDED_VERSION = v6.4
+aosep_VERSION = v1.0
 
-ifndef EXTENDED_BUILD_TYPE
-    EXTENDED_BUILD_TYPE := UNOFFICIAL
+ifndef aosep_BUILD_TYPE
+    aosep_BUILD_TYPE := UNOFFICIAL
 endif
 
-ifeq ($(EXTENDED_BUILD_TYPE), OFFICIAL)
+ifeq ($(aosep_BUILD_TYPE), OFFICIAL)
 
-# AEXOTA
-$(call inherit-product-if-exists, vendor/aosp/config/ota.mk)
+# aosepOTA
+#$(call inherit-product-if-exists, vendor/aosep/config/ota.mk)
 
 endif
 
-TARGET_PRODUCT_SHORT := $(subst aosp_,,$(CUSTOM_BUILD))
+TARGET_PRODUCT_SHORT := $(subst aosep_,,$(CUSTOM_BUILD))
 
-EXTENDED_BUILD_DATE := $(shell date -u +%Y%m%d-%H%M)
-EXTENDED_MOD_VERSION := AospExtended-$(EXTENDED_VERSION)-$(EXTENDED_BUILD_DATE)-$(EXTENDED_BUILD_TYPE)
-EXTENDED_FINGERPRINT := AospExtended/$(EXTENDED_VERSION)/$(PLATFORM_VERSION)/$(TARGET_PRODUCT_SHORT)/$(EXTENDED_BUILD_DATE)
+aosep_BUILD_DATE := $(shell date -u +%Y%m%d-%H%M)
+aosep_MOD_VERSION := aosep-$(aosep_VERSION)-$(aosep_BUILD_DATE)-$(aosep_BUILD_TYPE)
+aosep_FINGERPRINT := aosep/$(aosep_VERSION)/$(PLATFORM_VERSION)/$(TARGET_PRODUCT_SHORT)/$(aosep_BUILD_DATE)
 
 
 PRODUCT_GENERIC_PROPERTIES += \
-  ro.extended.version=$(EXTENDED_VERSION) \
-  ro.extended.releasetype=$(EXTENDED_BUILD_TYPE) \
-  ro.modversion=$(EXTENDED_MOD_VERSION)
+  ro.aosep.version=$(aosep_VERSION) \
+  ro.aosep.releasetype=$(aosep_BUILD_TYPE) \
+  ro.modversion=$(aosep_MOD_VERSION)
 
-EXTENDED_DISPLAY_VERSION := AospExtended-$(EXTENDED_VERSION)-$(EXTENDED_BUILD_TYPE)
+aosep_DISPLAY_VERSION := aosep-$ (aosep_VERSION)-$(aosep_BUILD_TYPE)
 
 PRODUCT_GENERIC_PROPERTIES += \
-  ro.extended.display.version=$(EXTENDED_DISPLAY_VERSION) \
-  ro.extended.fingerprint=$(EXTENDED_FINGERPRINT)
+  ro.aosep.display.version=$(aosep_DISPLAY_VERSION) \
+  ro.aosep.fingerprint=$(aosep_FINGERPRINT)
