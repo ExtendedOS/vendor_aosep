@@ -2,6 +2,6 @@
 #
 # Print startup info
 #
-L="log -p i -t aex"
+L="log -p i -t aosep"
 
-$L "Welcome to Android `getprop ro.build.version.release` / AospExtended `getprop ro.extended.version`";
+$L "Welcome to Android `getprop ro.build.version.release` / aosep `getprop ro.aosep.version`";
