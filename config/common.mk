@@ -14,7 +14,7 @@
 
  include vendor/aosep/config/version.mk
 
-PRODUCT_BRAND ?= AEX
+PRODUCT_BRAND ?= aosep
 
 # Backup Tool
 PRODUCT_COPY_FILES += \
