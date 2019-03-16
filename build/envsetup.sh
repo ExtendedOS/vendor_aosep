@@ -1,46 +1,190 @@
-function __print_aosp_functions_help() {
-cat <<EOF
-Additional AOSP functions:
-- gerrit:          Adds a remote for AEX Gerrit
-EOF
-}
+ # scissor functions that extend build/envsetup.sh
 
-function repopick() {
-    T=$(gettop)
-    $T/vendor/aosp/build/tools/repopick.py $@
-}
-
-function gerrit()
+function scissor_device_combos()
 {
-    if [ ! -d ".git" ]; then
-        echo -e "Please run this inside a git directory";
-    else
-        if [[ ! -z $(git config --get remote.gerrit.url) ]]; then
-            git remote rm gerrit;
-        fi
-        [[ -z "${GERRIT_USER}" ]] && export GERRIT_USER=$(git config --get gerrit.aospextended.com.username);
-        if [[ -z "${GERRIT_USER}" ]]; then
-            git remote add gerrit $(git remote -v | grep AospExtended | awk '{print $2}' | uniq | sed -e "s|https://github.com/AospExtended|ssh://gerrit.aospextended.com:29418/AospExtended|");
+    local T list_file variant device
+
+    T="$(gettop)"
+    list_file="${T}/vendor/scissor/scissor.devices"
+    variant="userdebug"
+
+    if [[ $1 ]]
+    then
+        if [[ $2 ]]
+        then
+            list_file="$1"
+            variant="$2"
         else
-            git remote add gerrit $(git remote -v | grep AospExtended | awk '{print $2}' | uniq | sed -e "s|https://github.com/AospExtended|ssh://${GERRIT_USER}@gerrit.aospextended.com:29418/AospExtended|");
+            if [[ ${VARIANT_CHOICES[@]} =~ (^| )$1($| ) ]]
+            then
+                variant="$1"
+            else
+                list_file="$1"
+            fi
         fi
     fi
+
+    if [[ ! -f "${list_file}" ]]
+    then
+        echo "unable to find device list: ${list_file}"
+        list_file="${T}/vendor/scissor/scissor.devices"
+        echo "defaulting device list file to: ${list_file}"
+    fi
+
+    while IFS= read -r device
+    do
+        add_lunch_combo "scissor_${device}-${variant}"
+    done < "${list_file}"
 }
 
-function fixup_common_out_dir() {
-    common_out_dir=$(get_build_var OUT_DIR)/target/common
-    target_device=$(get_build_var TARGET_DEVICE)
-    if [ ! -z $AOSP_FIXUP_COMMON_OUT ]; then
-        if [ -d ${common_out_dir} ] && [ ! -L ${common_out_dir} ]; then
-            mv ${common_out_dir} ${common_out_dir}-${target_device}
-            ln -s ${common_out_dir}-${target_device} ${common_out_dir}
-        else
-            [ -L ${common_out_dir} ] && rm ${common_out_dir}
-            mkdir -p ${common_out_dir}-${target_device}
-            ln -s ${common_out_dir}-${target_device} ${common_out_dir}
-        fi
-    else
-        [ -L ${common_out_dir} ] && rm ${common_out_dir}
-        mkdir -p ${common_out_dir}
-    fi
+function scissor_rename_function()
+{
+    eval "original_scissor_$(declare -f ${1})"
 }
+
+function _scissor_build_hmm() #hidden
+{
+    printf "%-8s %s" "${1}:" "${2}"
+}
+
+function scissor_append_hmm()
+{
+    HMM_DESCRIPTIVE=("${HMM_DESCRIPTIVE[@]}" "$(_scissor_build_hmm "$1" "$2")")
+}
+
+function scissor_add_hmm_entry()
+{
+    for c in ${!HMM_DESCRIPTIVE[*]}
+    do
+        if [[ "${1}" == $(echo "${HMM_DESCRIPTIVE[$c]}" | cut -f1 -d":") ]]
+        then
+            HMM_DESCRIPTIVE[${c}]="$(_scissor_build_hmm "$1" "$2")"
+            return
+        fi
+    done
+    scissor_append_hmm "$1" "$2"
+}
+
+function scissorremote()
+{
+    local proj pfx project
+
+    if ! git rev-parse &> /dev/null
+    then
+        echo "Not in a git directory. Please run this from an Android repository you wish to set up."
+        return
+    fi
+    git remote rm scissor 2> /dev/null
+
+    proj="$(pwd -P | sed "s#$ANDROID_BUILD_TOP/##g")"
+
+    if (echo "$proj" | egrep -q 'external|system|build|bionic|art|libcore|prebuilt|dalvik') ; then
+        pfx="android_"
+    fi
+
+    project="${proj//\//_}"
+
+    git remote add scissor "git@github.com:scissor/$pfx$project"
+    echo "Remote 'scissor' created"
+}
+
+function cmremote()
+{
+    local proj pfx project
+
+    if ! git rev-parse &> /dev/null
+    then
+        echo "Not in a git directory. Please run this from an Android repository you wish to set up."
+        return
+    fi
+    git remote rm cm 2> /dev/null
+
+    proj="$(pwd -P | sed "s#$ANDROID_BUILD_TOP/##g")"
+    pfx="android_"
+    project="${proj//\//_}"
+    git remote add cm "git@github.com:CyanogenMod/$pfx$project"
+    echo "Remote 'cm' created"
+}
+
+function aospremote()
+{
+    local pfx project
+
+    if ! git rev-parse &> /dev/null
+    then
+        echo "Not in a git directory. Please run this from an Android repository you wish to set up."
+        return
+    fi
+    git remote rm aosp 2> /dev/null
+
+    project="$(pwd -P | sed "s#$ANDROID_BUILD_TOP/##g")"
+    if [[ "$project" != device* ]]
+    then
+        pfx="platform/"
+    fi
+    git remote add aosp "https://android.googlesource.com/$pfx$project"
+    echo "Remote 'aosp' created"
+}
+
+function cafremote()
+{
+    local pfx project
+
+    if ! git rev-parse &> /dev/null
+    then
+        echo "Not in a git directory. Please run this from an Android repository you wish to set up."
+    fi
+    git remote rm caf 2> /dev/null
+
+    project="$(pwd -P | sed "s#$ANDROID_BUILD_TOP/##g")"
+    if [[ "$project" != device* ]]
+    then
+        pfx="platform/"
+    fi
+    git remote add caf "git://codeaurora.org/$pfx$project"
+    echo "Remote 'caf' created"
+}
+
+function scissor_push()
+{
+    local branch ssh_name path_opt proj
+    branch="lp5.1"
+    ssh_name="scissor_review"
+    path_opt=
+
+    if [[ "$1" ]]
+    then
+        proj="$ANDROID_BUILD_TOP/$(echo "$1" | sed "s#$ANDROID_BUILD_TOP/##g")"
+        path_opt="--git-dir=$(printf "%q/.git" "${proj}")"
+    else
+        proj="$(pwd -P)"
+    fi
+    proj="$(echo "$proj" | sed "s#$ANDROID_BUILD_TOP/##g")"
+    proj="$(echo "$proj" | sed 's#/$##')"
+    proj="${proj//\//_}"
+
+    if (echo "$proj" | egrep -q 'external|system|build|bionic|art|libcore|prebuilt|dalvik') ; then
+        proj="android_$proj"
+    fi
+
+    git $path_opt push "ssh://${ssh_name}/scissor/$proj" "HEAD:refs/for/$branch"
+}
+
+
+scissor_rename_function hmm
+function hmm() #hidden
+{
+    local i T
+    T="$(gettop)"
+    original_scissor_hmm
+    echo
+
+    echo "vendor/scissor extended functions. The complete list is:"
+    for i in $(grep -P '^function .*$' "$T/vendor/scissor/build/envsetup.sh" | grep -v "#hidden" | sed 's/function \([a-z_]*\).*/\1/' | sort | uniq); do
+        echo "$i"
+    done |column
+}
+
+scissor_append_hmm "scissorremote" "Add a git remote for matching scissor repository"
+scissor_append_hmm "aospremote" "Add git remote for matching AOSP repository"
+scissor_append_hmm "cafremote" "Add git remote for matching CodeAurora repository."
