@@ -65,15 +65,15 @@ function setup_vendor() {
         exit 1
     fi
 
-    export AOSP_ROOT="$3"
-    if [ ! -d "$AOSP_ROOT" ]; then
-        echo "\$AOSP_ROOT must be set and valid before including this script!"
+    export AOSEP_ROOT="$3"
+    if [ ! -d "$AOSEP_ROOT" ]; then
+        echo "\$AOSEP_ROOT must be set and valid before including this script!"
         exit 1
     fi
 
     export OUTDIR=vendor/"$VENDOR"/"$DEVICE"
-    if [ ! -d "$AOSP_ROOT/$OUTDIR" ]; then
-        mkdir -p "$AOSP_ROOT/$OUTDIR"
+    if [ ! -d "$AOSEP_ROOT/$OUTDIR" ]; then
+        mkdir -p "$AOSEP_ROOT/$OUTDIR"
     fi
 
     VNDNAME="$6"
@@ -81,9 +81,9 @@ function setup_vendor() {
         VNDNAME="$DEVICE"
     fi
 
-    export PRODUCTMK="$AOSP_ROOT"/"$OUTDIR"/"$VNDNAME"-vendor.mk
-    export ANDROIDMK="$AOSP_ROOT"/"$OUTDIR"/Android.mk
-    export BOARDMK="$AOSP_ROOT"/"$OUTDIR"/BoardConfigVendor.mk
+    export PRODUCTMK="$AOSEP_ROOT"/"$OUTDIR"/"$VNDNAME"-vendor.mk
+    export ANDROIDMK="$AOSEP_ROOT"/"$OUTDIR"/Android.mk
+    export BOARDMK="$AOSEP_ROOT"/"$OUTDIR"/BoardConfigVendor.mk
 
     if [ "$4" == "true" ] || [ "$4" == "1" ]; then
         COMMON=1
