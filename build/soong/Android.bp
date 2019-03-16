@@ -1,14 +1,14 @@
 bootstrap_go_package {
-    name: "soong-aosp-android",
-    pkgPath: "aosp/soong/android_aosp",
+    name: "soong-aoesp-android",
+    pkgPath: "aosep/soong/android_aosp",
     srcs: [
         "android/variable.go",
     ],
 }
 
 bootstrap_go_package {
-    name: "soong-aosp-generator",
-    pkgPath: "aosp/soong/generator",
+    name: "soong-aosep-generator",
+    pkgPath: "aosep/soong/generator",
     deps: [
         "blueprint",
         "blueprint-pathtools",
@@ -23,7 +23,7 @@ bootstrap_go_package {
     pluginFor: ["soong_build"],
 }
 
-aosp_generator {
+aosep_generator {
     name: "generated_kernel_includes",
 
     // The headers make command
