@@ -13,13 +13,13 @@
 # limitations under the License.
 
 #Extended Versioning
-aosep_VERSION = v1.0
+AOSEP_VERSION = v1.0
 
-ifndef aosep_BUILD_TYPE
-    aosep_BUILD_TYPE := UNOFFICIAL
+ifndef AOSEP_BUILD_TYPE
+    AOSEP_BUILD_TYPE := UNOFFICIAL
 endif
 
-ifeq ($(aosep_BUILD_TYPE), OFFICIAL)
+ifeq ($(AOSEP_BUILD_TYPE), OFFICIAL)
 
 # aosepOTA
 #$(call inherit-product-if-exists, vendor/aosep/config/ota.mk)
@@ -28,18 +28,18 @@ endif
 
 TARGET_PRODUCT_SHORT := $(subst aosep_,,$(CUSTOM_BUILD))
 
-aosep_BUILD_DATE := $(shell date -u +%Y%m%d-%H%M)
-aosep_MOD_VERSION := aosep-$(aosep_VERSION)-$(aosep_BUILD_DATE)-$(aosep_BUILD_TYPE)
-aosep_FINGERPRINT := aosep/$(aosep_VERSION)/$(PLATFORM_VERSION)/$(TARGET_PRODUCT_SHORT)/$(aosep_BUILD_DATE)
+AOSEP_BUILD_DATE := $(shell date -u +%Y%m%d-%H%M)
+AOSEP_MOD_VERSION := aosep-$(AOSEP_VERSION)-$(AOSEP_BUILD_DATE)-$(AOSEP_BUILD_TYPE)
+AOSEP_FINGERPRINT := aosep/$(AOSEP_VERSION)/$(PLATFORM_VERSION)/$(TARGET_PRODUCT_SHORT)/$(AOSEP_BUILD_DATE)
 
 
 PRODUCT_GENERIC_PROPERTIES += \
-  ro.aosep.version=$(aosep_VERSION) \
-  ro.aosep.releasetype=$(aosep_BUILD_TYPE) \
-  ro.modversion=$(aosep_MOD_VERSION)
+  ro.aosep.version=$(AOSEP_VERSION) \
+  ro.aosep.releasetype=$(AOSEP_BUILD_TYPE) \
+  ro.modversion=$(AOSEP_MOD_VERSION)
 
-aosep_DISPLAY_VERSION := aosep-$ (aosep_VERSION)-$(aosep_BUILD_TYPE)
+AOSEP_DISPLAY_VERSION := aosep-$ (AOSEP_VERSION)-$(AOSEP_BUILD_TYPE)
 
 PRODUCT_GENERIC_PROPERTIES += \
-  ro.aosep.display.version=$(aosep_DISPLAY_VERSION) \
-  ro.aosep.fingerprint=$(aosep_FINGERPRINT)
+  ro.aosep.display.version=$(AOSEP_DISPLAY_VERSION) \
+  ro.aosep.fingerprint=$(AOSEP_FINGERPRINT)
