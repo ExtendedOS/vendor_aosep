@@ -7,7 +7,7 @@ import (
 )
 
 func aosepExpandVariables(ctx android.ModuleContext, in string) string {
-	aosepVars := ctx.Config().VendorConfig("aospVarsPlugin")
+	aosepVars := ctx.Config().VendorConfig("aosepVarsPlugin")
 
 	out, err := android.Expand(in, func(name string) (string, error) {
 		if aosepVars.IsSet(name) {
