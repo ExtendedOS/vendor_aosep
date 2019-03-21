@@ -106,7 +106,7 @@ function cmremote()
     echo "Remote 'cm' created"
 }
 
-function aospremote()
+function aosepremote()
 {
     local pfx project
 
@@ -115,15 +115,15 @@ function aospremote()
         echo "Not in a git directory. Please run this from an Android repository you wish to set up."
         return
     fi
-    git remote rm aosp 2> /dev/null
+    git remote rm aosep 2> /dev/null
 
     project="$(pwd -P | sed "s#$ANDROID_BUILD_TOP/##g")"
     if [[ "$project" != device* ]]
     then
         pfx="platform/"
     fi
-    git remote add aosp "https://android.googlesource.com/$pfx$project"
-    echo "Remote 'aosp' created"
+    git remote add aosep "https://android.googlesource.com/$pfx$project"
+    echo "Remote 'aosep' created"
 }
 
 function cafremote()
@@ -186,5 +186,5 @@ function hmm() #hidden
 }
 
 aosep_append_hmm "aosepremote" "Add a git remote for matching aosep repository"
-aosep_append_hmm "aospremote" "Add git remote for matching AOSP repository"
+aosep_append_hmm "aosepremote" "Add git remote for matching AOSP repository"
 aosep_append_hmm "cafremote" "Add git remote for matching CodeAurora repository."
