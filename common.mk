@@ -13,8 +13,8 @@
 # limitations under the License.
 
 # Inherit common AOSP stuff
-$(call inherit-product, vendor/aosp/config/common.mk)
+$(call inherit-product, vendor/aosep/config/common.mk)
 
-$(call inherit-product, vendor/aosp/config/telephony.mk)
+$(call inherit-product, vendor/aosep/config/telephony.mk)
 
-$(call inherit-product, vendor/aosp/config/aex_props.mk)
+$(call inherit-product, vendor/aosep/config/aex_props.mk)
