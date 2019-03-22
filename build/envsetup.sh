@@ -186,5 +186,5 @@ function hmm() #hidden
 }
 
 aosep_append_hmm "aosepremote" "Add a git remote for matching aosep repository"
-aosep_append_hmm "aosepremote" "Add git remote for matching AOSP repository"
+aosep_append_hmm "aosepremote" "Add git remote for matching AOSEP repository"
 aosep_append_hmm "cafremote" "Add git remote for matching CodeAurora repository."
